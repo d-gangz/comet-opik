@@ -2,7 +2,6 @@ from opik import track
 from opik.opik_context import get_current_span_data
 from litellm.integrations.opik.opik import OpikLogger
 import litellm
-import asyncio
 
 opik_logger = OpikLogger()
 litellm.callbacks = [opik_logger]

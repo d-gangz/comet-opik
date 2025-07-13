@@ -1,5 +1,4 @@
 from litellm.integrations.opik.opik import OpikLogger
-from opik.opik_context import get_current_span_data
 import litellm
 import asyncio
 
