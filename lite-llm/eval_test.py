@@ -4,7 +4,7 @@ from opik.opik_context import get_current_span_data
 from litellm.integrations.opik.opik import OpikLogger
 import litellm
 import json
-from opik.evaluation.metrics import base_metric, score_result
+from opik.evaluation.metrics import base_metric, score_result, Equals
 from typing import Any
 from opik.evaluation import evaluate
 
@@ -135,14 +135,16 @@ Evaluation using the dataset, movie_rating_chain, and RatingMatch metric
 
 # Create metric instance
 rating_match_metric = RatingMatch()
+equals_metric = Equals()
 
 # Run evaluation
 evaluation = evaluate(
     dataset=dataset,
     task=movie_rating_chain,
-    scoring_metrics=[rating_match_metric],
+    scoring_metrics=[rating_match_metric, equals_metric],
     experiment_name="movie eval 2",
     experiment_config={"description": "Evaluating movie rating chain eval test"},
+    scoring_key_mapping={"reference": "expected_output"},
 )
 
 print("Evaluation completed!")
