@@ -41,18 +41,39 @@ def task(dataset_item):
 
 ### 4. Custom Metrics
 - Inherit from `base_metric.BaseMetric`
+- **IMPORTANT**: Must call `super().__init__()` to register the metric with Opik's tracking system
 - The `score` method receives merged dataset + task output
+- Use `reference` parameter name (not `expected_output`) for proper data mapping
 - Return `ScoreResult` with value, name, and optional reason
+
+**Critical for UI Display**: Your custom metric won't appear as a separate unit in the Opik trace unless you:
+1. Call `super().__init__()` with `track=True`
+2. Use the standard parameter name `reference` in your score method
+
 ```python
 class RatingMatch(base_metric.BaseMetric):
-    def score(self, output: str, expected_output: str, **ignored_kwargs):
-        match = output.strip().upper() == expected_output.strip().upper()
+    def __init__(self, name: str = "rating_match", track: bool = True, project_name: Optional[str] = None):
+        # MUST call super().__init__() to register with Opik!
+        super().__init__(
+            name=name,
+            track=track,  # This enables UI tracking
+            project_name=project_name,
+        )
+    
+    def score(self, output: str, reference: str, **ignored_kwargs):
+        # Use 'reference' not 'expected_output' for proper mapping
+        match = output.strip().upper() == reference.strip().upper()
         return score_result.ScoreResult(
             name=self.name,
             value=1.0 if match else 0.0,
-            reason=f"Output '{output}' {'matches' if match else 'does not match'} expected '{expected_output}'"
+            reason=f"Output '{output}' {'matches' if match else 'does not match'} expected '{reference}'"
         )
 ```
+
+**Why This Matters**:
+- Without `super().__init__()`: Your metric calculates scores but isn't registered with Opik's tracking system
+- Without `track=True`: The metric won't create a separate trace span in the UI
+- Without `reference` parameter: Opik can't properly map your expected values from the dataset
 
 ### 5. Dataset Structure
 Dataset items should contain all inputs and expected outputs:
@@ -84,6 +105,11 @@ evaluation = evaluate(
 ```python
 response_format=prompt_template.metadata["response_format"]
 ```
+
+5. **Custom Metrics Not Showing in UI**: 
+   - Forgetting to call `super().__init__()` in custom metric constructor
+   - Not passing `track=True` to enable UI tracking
+   - Using wrong parameter names (e.g., `expected_output` instead of `reference`)
 
 ## Prompt Chaining Example
 For multi-step LLM chains:

@@ -5,7 +5,7 @@ from litellm.integrations.opik.opik import OpikLogger
 import litellm
 import json
 from opik.evaluation.metrics import base_metric, score_result, Equals
-from typing import Any
+from typing import Any, Optional
 from opik.evaluation import evaluate
 
 # Initialise logger
@@ -116,17 +116,21 @@ Scores 1 if output matches expected_output, else 0
 """
 
 class RatingMatch(base_metric.BaseMetric):
-    def __init__(self, name: str = "RatingMatch"):
-        self.name = name
+    def __init__(self, name: str = "rating_match", track: bool = True, project_name: Optional[str] = None):
+        super().__init__(
+            name=name,
+            track=track,
+            project_name=project_name,
+        )
     
-    def score(self, output: str, expected_output: str, **ignored_kwargs: Any):
-        # Compare output with expected_output (case-insensitive and stripped)
-        match = output.strip().upper() == expected_output.strip().upper()
+    def score(self, output: str, reference: str, **ignored_kwargs: Any):
+        # Compare output with reference (case-insensitive and stripped)
+        match = output.strip().upper() == reference.strip().upper()
         
         return score_result.ScoreResult(
             name=self.name,
             value=1.0 if match else 0.0,
-            reason=f"Output '{output}' {'matches' if match else 'does not match'} expected '{expected_output}'"
+            reason=f"Output '{output}' {'matches' if match else 'does not match'} expected '{reference}'"
         )
 
 """
