@@ -88,6 +88,8 @@ Alternative integration pattern using LangChain:
 ## Important Notes
 
 ### Opik Documentation
+Check out `opik-documentation.md` for the Full Opik documentation.
+
 Here is the [full documentation for Opik](https://www.comet.com/docs/opik/llms-full.txt)
 
 Do fetch the contents from this link when I am implementing any Opik Stuff.

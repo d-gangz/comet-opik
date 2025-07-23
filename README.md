@@ -24,7 +24,7 @@ This project is a sandbox for testing and evaluating AI applications using [Opik
 
 3. **Install dependencies:**
    ```bash
-   pip install -r requirements.txt
+   pip3 install -r requirements.txt
    ```
 
 4. **Configure Opik:**
