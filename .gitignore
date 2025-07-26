@@ -147,3 +147,6 @@ Thumbs.db
 # Opik specific
 opik.db
 .opik/
+
+# mcp JSON
+.mcp.json
